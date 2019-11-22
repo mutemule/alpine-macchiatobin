@@ -246,6 +246,7 @@ build_kernel
 deploy_kernel
 create_initramfs
 create_modloop
+deploy_package_repository
 
 # TODO: we should build an actual SD card image instead of just a tarball
 echo "--> Creating tarball that goes into SD card root..."
