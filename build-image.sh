@@ -228,6 +228,8 @@ mkdir -p "${ALPINE_DISTRO}"
 mkdir -p "${INITRAMFS_ROOT}"
 mkdir -p "${MODLOOP_ROOT}"
 
+test "${BUILD_ROOT}" == "${PWD}" && error 73 "We don't support maching our build root be the location of the script"
+
 # TODO: Better output handling, logging, etc.
 # We should have a `log` function, much like `error`, instead of littering the code with `echo`
 LOGDIR="${PWD}"
