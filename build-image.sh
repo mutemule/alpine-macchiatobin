@@ -56,7 +56,7 @@ get_alpine_distribution() {
     || error "${?}" "Failed to download Alpine u-boot distribution signature."
 
   echo "--> Validating distribution signature..."
-  gpgv --keyring "${keyring}" \
+  gpgv -q --keyring "${keyring}" \
     "alpine-uboot-${ALPINE_VERSION}.${ALPINE_PATCHLEVEL}-aarch64.tar.gz.asc" \
     "alpine-uboot-${ALPINE_VERSION}.${ALPINE_PATCHLEVEL}-aarch64.tar.gz" \
     || error "${?}" "Failed to validate signatures of the Alpine distribution!"
@@ -97,7 +97,7 @@ get_kernel() {
   #   || error "${?}" "Failed to download Linux kernel signature for ${KERNEL_VERSION}."
   #
   # --> echo "Validating kernel signature..."
-  # xzcat linux-${KERNEL_VERSION}.tar.xz | gpgv linux-${KERNEL_VERSION}.tar.sign -)
+  # xzcat linux-${KERNEL_VERSION}.tar.xz | gpgv -q --keyring "${PWD}/trustedkeys.kbx" linux-${KERNEL_VERSION}.tar.sign -)
 
   echo "--> Extracting Linux kernel..."
   tar -xf linux-${KERNEL_VERSION}.tar.gz \
