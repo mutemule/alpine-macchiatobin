@@ -21,7 +21,7 @@ NB: Minicom was acting strangely for me on Linux; I found it much easier to use 
 3. Check out this source tree, and copy it to the host
 4. SSH over (default username/password is `debian`), spin up a `tmux` session, and type `bash build-image.sh`
 5. Once complete, copy the resulting tarball back to your computer
-6. Initialize your MicroSD card with an MSDOS partition table -- using UEFI can cause U-Boot to behave weirdly
+6. Initialize your MicroSD card with an MSDOS partition table -- using GPT can cause U-Boot to behave weirdly
 7. Create a single partition, of at least 550MB, and format it with your filesystem of choice -- confirmed that FAT32 and ext4 both work just fine
 8. Explode the tarball you copied in #5 above into the root of the MicroSD card.
 
