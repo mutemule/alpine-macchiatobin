@@ -5,7 +5,7 @@ set -Eeu
 ALPINE_VERSION="3.10"
 ALPINE_PATCHLEVEL="3"
 KERNEL_VERSION="5.4-rc8"
-BUILD_ROOT="${HOME}/alpine-macchiatobin"
+BUILD_ROOT="${HOME}/alpine-macchiatobin/build"
 
 # The rest of these shouldn't require tuning
 SD_ROOT="${BUILD_ROOT}/sdcard"
@@ -105,6 +105,10 @@ get_kernel() {
   # tar -xf linux-${KERNEL_VERSION}.tar.xz \
   #   || error "${?}" "Failed to extract kernel."
 
+  # TODO: this produces some output, and I really wish it didn't
+  # We might need to save ${PWD} when we enter a function, or just
+  # change the assumption that we are always in the same directory
+  # as the script
   cd -
 }
 
