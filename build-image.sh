@@ -153,19 +153,19 @@ deploy_kernel() {
   cp -R "${INITRAMFS_ROOT}/lib/modules" "${MODLOOP_ROOT}" \
     || error "${?}" "Failed to copy kernel modules to modloop."
 
-  echo "Copying kernel in place..."
+  echo "--> Copying kernel in place..."
   install -m 0755 "${BUILD_ROOT}/linux-${KERNEL_VERSION}/arch/arm64/boot/Image" "${SD_ROOT}/boot/vmlinuz-${KERNEL_VERSION}" \
     || error "${?}" "Failed to deploy kernel image to ${SD_ROOT}/boot."
 
-  echo "Copying kernel config in place..."
+  echo "--> Copying kernel config in place..."
   install -m 0644 "${BUILD_ROOT}/linux-${KERNEL_VERSION}/.config" "${SD_ROOT}/boot/config-${KERNEL_VERSION}" \
     || error "${?}" "Failed to deploy kernel configuration to ${SD_ROOT}/boot."
 
-  echo "Copying System.map in place..."
+  echo "--> Copying System.map in place..."
   install -m 0644 "${BUILD_ROOT}/linux-${KERNEL_VERSION}/System.map" "${SD_ROOT}/boot/System.map-${KERNEL_VERSION}" \
     || error "${?}" "Failed to deploy kernel map to ${SD_ROOT}/boot."
 
-  echo "Installing dtbs..."
+  echo "--> Installing dtbs..."
   INSTALL_PATH="${SD_ROOT}/boot" make -C "${BUILD_ROOT}/linux-${KERNEL_VERSION}" dtbs_install
   
   # We have to temporarily work around the fact that our kernel version is "5.4-rc8", but the built kernel identifies itself as "5.4.0-rc8"
