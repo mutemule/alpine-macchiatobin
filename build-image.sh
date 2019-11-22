@@ -5,7 +5,7 @@ set -Eeu
 ALPINE_VERSION="3.10"
 ALPINE_PATCHLEVEL="3"
 KERNEL_VERSION="5.4-rc8"
-BUILD_ROOT="${HOME}/alpine-macchiatobin/build"
+BUILD_ROOT="${PWD}/build"
 
 # The rest of these shouldn't require tuning
 SD_ROOT="${BUILD_ROOT}/sdcard"
