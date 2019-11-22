@@ -91,3 +91,6 @@ So would I, probably. Thankfully it's pretty easy to add a package to your syste
 Because all my cross-compiling efforts were failing, and using SolidRun's Debian distribution was the easiest way to get a stable system up and running, with a reasonably current version of `gcc` available.
 
 This will *probably* work on any Debian derivative (i.e. Ubuntu) with no modifications, but I haven't tested it. Using this script with any other distribution will require some slight modifications -- probably just to the package installation stuff, and the build flags we use when building the kernel.
+
+### Why not just use UEFI?
+Alpine's preferred boot manager (syslinux) doesn't support AARCH64, and the U-Boot support is perfectly functional. I'll admit to actually liking UEFI, but in the spirit of keeping things simple, there's no particularly compelling reason to move away from U-Boot at this time.
