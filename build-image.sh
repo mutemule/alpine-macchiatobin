@@ -169,11 +169,11 @@ deploy_kernel() {
   INSTALL_PATH="${SD_ROOT}/boot" make -C "${BUILD_ROOT}/linux-${KERNEL_VERSION}" dtbs_install
   
   # We have to temporarily work around the fact that our kernel version is "5.4-rc8", but the built kernel identifies itself as "5.4.0-rc8"
-  mv "${SD_ROOT}/boot/dtbs/*" "${SD_ROOT}/boot/dtbs/${KERNEL_VERSION}"
+  mv "${SD_ROOT}"/boot/dtbs/* "${SD_ROOT}"/boot/dtbs/"  ${KERNEL_VERSION}"
   
   # Our boot script looks for a specific dtb at `/boot/dtbs/<kernel>/<name>.dtb`, so make that available
   # We copy instead of move, so we're still lined up with the more traditional dtb placement (/boot/dtbs/<kernel>/<vendor>/<name>.dtb)
-  cp "${SD_ROOT}/boot/dtbs/${KERNEL_VERSION}/marvell/armada-8040-*" "${SD_ROOT}/boot/dtbs/${KERNEL_VERSION}"
+  cp "${SD_ROOT}"/boot/dtbs/"${KERNEL_VERSION}"/marvell/armada-8040-* "${SD_ROOT}"/boot/dtbs/"${KERNEL_VERSION}"
 }
 
 create_initramfs() {
