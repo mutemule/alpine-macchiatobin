@@ -218,7 +218,9 @@ deploy_package_repository() {
 }
 
 # Ew
-mv "${BUILD_ROOT}" "${BUILD_ROOT}.$(date +"%Y%m%d%H%M%S")"
+# Move any previous builds out of the way
+# TODO: There's probably no need to keep these around, so this should just be rmeoved, or be configurable, or something
+test -d "${BUILD_ROOT}" && mv "${BUILD_ROOT}" "${BUILD_ROOT}.$(date +"%Y%m%d%H%M%S")"
 mkdir -p "${BUILD_ROOT}"
 mkdir -p "${SD_ROOT}"
 mkdir -p "${SD_ROOT}/boot"
