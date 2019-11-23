@@ -39,6 +39,7 @@ All the things I'd like to change but haven't gotten around to yet:
 4. Automatically identify the latest Alpine distribution and use that -- maybe even be able to specify `edge` or `stable`.
 5. Tune up the base install to mount the on-board `mmc` device automatically (to be used for LBU)
 6. Really clean up that build script. It's pretty rough.
+7. Patch in Wireguard support, since we can't really use the upstream kernel module here.
 
 ## FAQ
 ### Why is there a FAQ? Nobody uses this but you.
