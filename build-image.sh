@@ -177,11 +177,14 @@ deploy_kernel() {
 }
 
 create_initramfs() {
+  cd "${INITRAMFS_ROOT}" \
+    || error 91 "Failed to change to '${INITRAMFS_ROOT}' to create our initramfs."
+
   # We specify `newc` because that's the format the kernel expects
   # And maximize the compression because sd cards are slow
   # TODO: can we use a better form of compression here?
   echo "--> Creating initramfs..."
-  find "${INITRAMFS_ROOT}" -printf '%P' | cpio -H newc -o | gzip -9 > "${BUILD_ROOT}/initramfs-${KERNEL_VERSION}" \
+  find . | cpio -H newc -o | gzip -9 > "${BUILD_ROOT}/initramfs-${KERNEL_VERSION}" \
     || error "${?}" "Failed to create initramfs."
 
   echo "--> Building u-boot compatible initramfs..."
@@ -189,6 +192,8 @@ create_initramfs() {
     || error "${?}" "Failed to u-boot-ize our initramfs."
   
   rm -f "${BUILD_ROOT}/initramfs-${KERNEL_VERSION}" || true
+
+  cd -
 }
 
 create_modloop() {
