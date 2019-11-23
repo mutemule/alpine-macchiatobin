@@ -203,6 +203,14 @@ create_modloop() {
   mksquashfs "${MODLOOP_ROOT}/" "${SD_ROOT}/boot/modloop-${KERNEL_VERSION}" -b 1048576 -comp xz -Xdict-size 100%
 }
 
+deploy_package_repository() {
+  # TODO: we need to add a bunch of packages in here, figuring out dependencies and pulling them in automatically
+  # For now, just use the packages provided by upstream in the distribution, and the rest can be installed the normal way
+  ### This is where we need to spend a bit more time on the magic
+  echo "--> Provisioning local package repository..."
+  cp -R "${ALPINE_DISTRO}/apks" "${SD_ROOT}/"
+}
+
 create_boot_script() {
   echo "--> Setting boot script variables..."
   sed -e "s/@@KERNEL_VERSION@@/${KERNEL_VERSION}/" boot.cmd > "${SD_ROOT}/boot/boot.cmd" \
@@ -211,14 +219,6 @@ create_boot_script() {
   echo "--> Building u-boot compatible boot script..."
   mkimage -C none -A arm -T script -d "${SD_ROOT}/boot/boot.cmd" "${SD_ROOT}/boot/boot.scr" \
     || error "${?}" "Failed to u-boot-ize our boot script."
-}
-
-deploy_package_repository() {
-  # TODO: we need to add a bunch of packages in here, figuring out dependencies and pulling them in automatically
-  # For now, just use the packages provided by upstream in the distribution, and the rest can be installed the normal way
-  ### This is where we need to spend a bit more time on the magic
-  echo "--> Provisioning local package repository..."
-  cp -R "${ALPINE_DISTRO}/apks" "${SD_ROOT}/"
 }
 
 # Ew
@@ -247,6 +247,7 @@ deploy_kernel
 create_initramfs
 create_modloop
 deploy_package_repository
+create_boot_script
 
 # TODO: we should build an actual SD card image instead of just a tarball
 echo "--> Creating tarball that goes into SD card root..."
