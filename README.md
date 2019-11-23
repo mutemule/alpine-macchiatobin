@@ -15,8 +15,7 @@ NB: Minicom was acting strangely for me on Linux; I found it much easier to use 
 
 ## Instructions
 
-1. (Optional) [Update the U-Boot](https://developer.solid-run.com/knowledge-base/armada-8040-machiatobin-u-boot-and-atf/) on your board.
-** If you put the resulting flash-image.bin on the root of a FAT32-formatted MicroSD card, you can update u-boot with `bubt flash-image.bin spi mmc` at the u-boot prompt
+1. (Optional) [Update the U-Boot](https://developer.solid-run.com/knowledge-base/armada-8040-machiatobin-u-boot-and-atf/) on your board. (If you put the resulting flash-image.bin on the root of a FAT32-formatted USB stick, you can update u-boot with `bubt flash-image.bin spi usb` at the u-boot prompt.)
 2. Get your Debian-based MACCHIATObin online
 3. Check out this source tree, and copy it to the host
 4. SSH over (default username/password is `debian`), spin up a `tmux` session, and type `bash build-image.sh`
