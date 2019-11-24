@@ -8,6 +8,9 @@ fi
 
 setenv bootargs ${bootargs} earlycon log_level=7 modloop=/boot/modloop-${fk_kvers}
 
+# Add our custom packages here
+setenv bootargs ${bootargs} pkgs=openssh,vlan
+
 # These two blocks should be the same apart from the use of
 # ${fk_kvers} in the first, the syntax supported by u-boot does not
 # lend itself to removing this duplication.
