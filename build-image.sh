@@ -273,6 +273,8 @@ ALPINE_VERSION_PATCHLEVEL="${ALPINE_VERSION_FULL##*.}"
 test -z "${ALPINE_VERSION}" && error 17 "Unable to identify Alpine release version based on full version '${ALPINE_VERSION_FULL}'."
 test -z "${ALPINE_VERSION_PATCHLEVEL}" && error 17 "Unable to identify Alpine release patchlevel based on full version '${ALPINE_VERSION_FULL}'."
 
+echo "--> Targeting Alpine ${ALPINE_RELEASE} version ${ALPINE_VERSION_FULL}."
+
 install_requirements
 get_alpine_distribution
 extract_initramfs
