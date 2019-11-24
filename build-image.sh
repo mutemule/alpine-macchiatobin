@@ -19,7 +19,7 @@ error() {
   local retcode="${1}"
   shift
 
-  echo "--! ${*}"
+  echo "--! ${*}" >&2
 
   exit "${retcode:-255}"
 }
