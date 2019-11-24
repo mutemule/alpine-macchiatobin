@@ -6,7 +6,7 @@ if test -z "${fk_kvers}"; then
    setenv fk_kvers '@@KERNEL_VERSION@@'
 fi
 
-setenv bootargs ${bootargs} earlycon log_level=7 net.ifnames=0 modloop=/boot/modloop-${fk_kvers}
+setenv bootargs ${bootargs} earlycon log_level=7 modloop=/boot/modloop-${fk_kvers}
 
 # These two blocks should be the same apart from the use of
 # ${fk_kvers} in the first, the syntax supported by u-boot does not
