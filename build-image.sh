@@ -2,8 +2,7 @@
 
 set -Eeu
 
-ALPINE_VERSION="3.10"
-ALPINE_PATCHLEVEL="3"
+ALPINE_RELEASE="stable"
 KERNEL_VERSION="5.4-rc8"
 BUILD_ROOT="${PWD}/build"
 
@@ -42,6 +41,20 @@ install_requirements() {
   fi
 }
 
+get_alpine_version() {
+  # TODO: since this function returns a value, we can't echo anything to the screen
+  # Really need that log function here...
+  # echo "--> Identifying latest version of Alpine..."
+  local aarch64_release_url="${ALPINE_URL_BASE}/latest-releases.yaml"
+
+  local aarch64_release_data
+  aarch64_release_data=$(curl -sL "${aarch64_release_url}" -o - | awk '/^  title: "Generic ARM"/,/^-$/')
+
+  test -z "${aarch64_release_data}" && error 101 "Could not identify latest u-boot package in the ${ALPINE_RELEASE} channel."
+
+  echo "${aarch64_release_data}" | awk '/version/ {print $2}'
+}
+
 get_alpine_distribution() {
   local keyring="${PWD}/trustedkeys.kbx"
   test -f "${keyring}" || error 7 "Could not find keyring to validate GPG signatures at '${keyring}'."
@@ -50,19 +63,19 @@ get_alpine_distribution() {
 
   # TODO: Identify the latest patchlevel automatically
   echo "--> Downloading Alpine AARCH64 u-boot distribution..."
-  curl -sLO "http://dl-cdn.alpinelinux.org/alpine/v${ALPINE_VERSION}/releases/aarch64/alpine-uboot-${ALPINE_VERSION}.${ALPINE_PATCHLEVEL}-aarch64.tar.gz" \
+  curl -sLO "${ALPINE_URL_BASE}/alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz" \
     || error "${?}" "Failed to download Alpine u-boot distribution."
-  curl -sLO "http://dl-cdn.alpinelinux.org/alpine/v${ALPINE_VERSION}/releases/aarch64/alpine-uboot-${ALPINE_VERSION}.${ALPINE_PATCHLEVEL}-aarch64.tar.gz.asc" \
+  curl -sLO "${ALPINE_URL_BASE}/alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz.asc" \
     || error "${?}" "Failed to download Alpine u-boot distribution signature."
 
   echo "--> Validating distribution signature..."
   gpgv -q --keyring "${keyring}" \
-    "alpine-uboot-${ALPINE_VERSION}.${ALPINE_PATCHLEVEL}-aarch64.tar.gz.asc" \
-    "alpine-uboot-${ALPINE_VERSION}.${ALPINE_PATCHLEVEL}-aarch64.tar.gz" \
+    "alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz.asc" \
+    "alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz" \
     || error "${?}" "Failed to validate signatures of the Alpine distribution!"
 
   echo "--> Extracting distribution..."
-  tar -C "${ALPINE_DISTRO}" -xf "alpine-uboot-${ALPINE_VERSION}.${ALPINE_PATCHLEVEL}-aarch64.tar.gz" \
+  tar -C "${ALPINE_DISTRO}" -xf "alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz" \
    || error "${?}" "Failed to extract Alpine u-boot distribution."
 
   # I don't like relying on `cd -`, but the output of pushd/popd can be confusing
@@ -242,6 +255,23 @@ test "${BUILD_ROOT}" == "${PWD}" && error 73 "We don't support maching our build
 # TODO: Better output handling, logging, etc.
 # We should have a `log` function, much like `error`, instead of littering the code with `echo`
 LOGDIR="${PWD}"
+
+ALPINE_URL_BASE=""
+if [ "${ALPINE_RELEASE}" == "stable" ]
+then
+  ALPINE_URL_BASE="http://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/aarch64"
+# elif [ "${ALPINE_RELEASE}" == "edge" ]
+# then
+#   ALPINE_URL_BASE="http://dl-cdn.alpinelinux.org/alpine/edge/releases/aarch64"
+else
+  error 77 "We only support using the 'stable' Alpine channel ('edge' has no generic ARM pre-package)."
+fi
+
+ALPINE_VERSION_FULL="$(get_alpine_version)"
+ALPINE_VERSION="${ALPINE_VERSION_FULL%.*}"
+ALPINE_VERSION_PATCHLEVEL="${ALPINE_VERSION_FULL##*.}"
+test -z "${ALPINE_VERSION}" && error 17 "Unable to identify Alpine release version based on full version '${ALPINE_VERSION_FULL}'."
+test -z "${ALPINE_VERSION_PATCHLEVEL}" && error 17 "Unable to identify Alpine release patchlevel based on full version '${ALPINE_VERSION_FULL}'."
 
 install_requirements
 get_alpine_distribution
