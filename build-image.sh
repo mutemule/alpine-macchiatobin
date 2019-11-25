@@ -61,7 +61,6 @@ get_alpine_distribution() {
 
   cd "${BUILD_ROOT}" || error 3 "Could not find our build root at ${BUILD_ROOT}."
 
-  # TODO: Identify the latest patchlevel automatically
   echo "--> Downloading Alpine AARCH64 u-boot distribution..."
   curl -sLO "${ALPINE_URL_BASE}/releases/aarch64/alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz" \
     || error "${?}" "Failed to download Alpine u-boot distribution."
