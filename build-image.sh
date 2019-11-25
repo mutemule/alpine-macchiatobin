@@ -45,7 +45,7 @@ get_alpine_version() {
   # TODO: since this function returns a value, we can't echo anything to the screen
   # Really need that log function here...
   # echo "--> Identifying latest version of Alpine..."
-  local aarch64_release_url="${ALPINE_URL_BASE}/latest-releases.yaml"
+  local aarch64_release_url="${ALPINE_URL_BASE}/releases/aarch64/latest-releases.yaml"
 
   local aarch64_release_data
   aarch64_release_data=$(curl -sL "${aarch64_release_url}" -o - | awk '/^  title: "Generic ARM"/,/^-$/')
@@ -63,9 +63,9 @@ get_alpine_distribution() {
 
   # TODO: Identify the latest patchlevel automatically
   echo "--> Downloading Alpine AARCH64 u-boot distribution..."
-  curl -sLO "${ALPINE_URL_BASE}/alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz" \
+  curl -sLO "${ALPINE_URL_BASE}/releases/aarch64/alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz" \
     || error "${?}" "Failed to download Alpine u-boot distribution."
-  curl -sLO "${ALPINE_URL_BASE}/alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz.asc" \
+  curl -sLO "${ALPINE_URL_BASE}/releases/aarch64/alpine-uboot-${ALPINE_VERSION_FULL}-aarch64.tar.gz.asc" \
     || error "${?}" "Failed to download Alpine u-boot distribution signature."
 
   echo "--> Validating distribution signature..."
@@ -259,10 +259,10 @@ LOGDIR="${PWD}"
 ALPINE_URL_BASE=""
 if [ "${ALPINE_RELEASE}" == "stable" ]
 then
-  ALPINE_URL_BASE="http://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/aarch64"
+  ALPINE_URL_BASE="http://dl-cdn.alpinelinux.org/alpine/latest-stable"
 # elif [ "${ALPINE_RELEASE}" == "edge" ]
 # then
-#   ALPINE_URL_BASE="http://dl-cdn.alpinelinux.org/alpine/edge/releases/aarch64"
+#   ALPINE_URL_BASE="http://dl-cdn.alpinelinux.org/alpine/edge"
 else
   error 77 "We only support using the 'stable' Alpine channel ('edge' has no generic ARM pre-package)."
 fi
