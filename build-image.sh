@@ -3,7 +3,7 @@
 set -Eeu
 
 ALPINE_RELEASE="stable"
-KERNEL_VERSION="5.4-rc8"
+KERNEL_VERSION="5.4"
 BUILD_ROOT="${PWD}/build"
 
 # The rest of these shouldn't require tuning
@@ -94,6 +94,11 @@ extract_initramfs() {
 }
 
 get_kernel() {
+  # TODO: we define keyring in multiple functions; this should be changed
+  local keyring="${PWD}/trustedkeys.kbx"
+  test -f "${keyring}" || error 7 "Could not find keyring to validate GPG signatures at '${keyring}'."
+
+
   cd "${BUILD_ROOT}" || error 3 "Could not find our build root at ${BUILD_ROOT}."
 
   echo "--> Downloading Linux kernel..."
@@ -102,20 +107,21 @@ get_kernel() {
 
   # TODO: monitor for a proper 5.4 release and update once that's published
   # TODO: figure out what happens when we need to support multiple major/minor versions
-  # Since we're grabbing an RC kernel, there's no signature, and the URL is different.
-  # curl -sLO "https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${KERNEL_VERSION}.tar.xz" \
-  #   || error "${?}" "Failed to download Linux kernel ${KERNEL_VERSION}."
-  # curl -sLO "https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${KERNEL_VERSION}.tar.sign" \
-  #   || error "${?}" "Failed to download Linux kernel signature for ${KERNEL_VERSION}."
-  #
-  # --> echo "Validating kernel signature..."
-  # xzcat linux-${KERNEL_VERSION}.tar.xz | gpgv -q --keyring "${PWD}/trustedkeys.kbx" linux-${KERNEL_VERSION}.tar.sign -)
+  curl -sLO "https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${KERNEL_VERSION}.tar.xz" \
+    || error "${?}" "Failed to download Linux kernel ${KERNEL_VERSION}."
+  curl -sLO "https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${KERNEL_VERSION}.tar.sign" \
+    || error "${?}" "Failed to download Linux kernel signature for ${KERNEL_VERSION}."
+
+  echo "--> Validating kernel signature..."
+  xzcat linux-${KERNEL_VERSION}.tar.xz | \
+    gpgv -q --keyring "${keyring}" \
+    "linux-${KERNEL_VERSION}.tar.sign" - \
+    || error "${?}" "Failed to validate signatures of the Alpine distribution!"
+
 
   echo "--> Extracting Linux kernel..."
-  tar -xf linux-${KERNEL_VERSION}.tar.gz \
+  tar -xf linux-${KERNEL_VERSION}.tar.xz \
     || error "${?}" "Failed to extract kernel."
-  # tar -xf linux-${KERNEL_VERSION}.tar.xz \
-  #   || error "${?}" "Failed to extract kernel."
 
   # TODO: this produces some output, and I really wish it didn't
   # We might need to save ${PWD} when we enter a function, or just
@@ -179,10 +185,10 @@ deploy_kernel() {
 
   echo "--> Installing dtbs..."
   INSTALL_PATH="${SD_ROOT}/boot" make -C "${BUILD_ROOT}/linux-${KERNEL_VERSION}" dtbs_install
-  
-  # We have to temporarily work around the fact that our kernel version is "5.4-rc8", but the built kernel identifies itself as "5.4.0-rc8"
+
+  # We have to temporarily work around the fact that our kernel version is "5.4", but the built kernel identifies itself as "5.4.0"
   mv "${SD_ROOT}"/boot/dtbs/* "${SD_ROOT}"/boot/dtbs/"${KERNEL_VERSION}"
-  
+
   # Our boot script looks for a specific dtb at `/boot/dtbs/<kernel>/<name>.dtb`, so make that available
   # We copy instead of move, so we're still lined up with the more traditional dtb placement (/boot/dtbs/<kernel>/<vendor>/<name>.dtb)
   cp "${SD_ROOT}"/boot/dtbs/"${KERNEL_VERSION}"/marvell/armada-8040-* "${SD_ROOT}"/boot/dtbs/"${KERNEL_VERSION}"
