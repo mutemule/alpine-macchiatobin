@@ -3,7 +3,7 @@
 set -Eeu
 
 ALPINE_RELEASE="stable"
-KERNEL_VERSION="5.4"
+KERNEL_VERSION="5.4.1"
 BUILD_ROOT="${PWD}/build"
 
 # The rest of these shouldn't require tuning
@@ -185,9 +185,6 @@ deploy_kernel() {
 
   echo "--> Installing dtbs..."
   INSTALL_PATH="${SD_ROOT}/boot" make -C "${BUILD_ROOT}/linux-${KERNEL_VERSION}" dtbs_install
-
-  # We have to temporarily work around the fact that our kernel version is "5.4", but the built kernel identifies itself as "5.4.0"
-  mv "${SD_ROOT}"/boot/dtbs/* "${SD_ROOT}"/boot/dtbs/"${KERNEL_VERSION}"
 
   # Our boot script looks for a specific dtb at `/boot/dtbs/<kernel>/<name>.dtb`, so make that available
   # We copy instead of move, so we're still lined up with the more traditional dtb placement (/boot/dtbs/<kernel>/<vendor>/<name>.dtb)
