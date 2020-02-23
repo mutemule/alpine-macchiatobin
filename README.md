@@ -1,3 +1,3 @@
 ## Relocated
 
-Project has been move to [https://git.sr.ht/~mutemule/alpine-macchiatobin](mutemule/alpine-macchiatobin) on Sourcehut.
+Project has been move to [~mutemule/alpine-macchiatobin](https://git.sr.ht/~mutemule/alpine-macchiatobin/) on [Sourcehut](https://sourcehut.org/).
